@@ -4,7 +4,7 @@
 
 This will be to store my notes and link references used through taking my OSCP
 
-[embed]https://github.com/Pwn20wn/CrushingOSCP/blob/main/images/OSCP-Labs-Pentest-Process.pdf[embed]
+[embed]https://github.com/Pwn20wn/CrushingOSCP/blob/main/images/OSCP-Labs-Pentest-Process.pdf[/embed]
 
 ## Getting started
 
