@@ -4,6 +4,7 @@
 
 This will be to store my notes and link references used through taking my OSCP
 
+
 ## Getting started
 
 To make it easy for you to get started with GitLab, here's a list of recommended next steps.
@@ -21,7 +22,15 @@ git remote add origin https://github.com/Pwn20wn/CrushingOSCP.git
 git branch -M main
 git push -uf origin main
 ```
+## Tools to Download
+- [] LinPeas
+- [] JuicyPotato
+- [] Seclists
+- [] Sherlock
+- [] PowerUp
 
+## Don't reinvent the wheel
+- [] 
 ## Reference Links
 ### Web Recon
 ```
@@ -35,7 +44,7 @@ nmap -A -p 139,445 10.11.1.1-254 -oG smb_results.txt
 
 cat smb_results.txt | grep -i windows | cut -d" " -f2
 
- cat smb_results.txt | grep -i open | cut -d" " -f2 > smb_server_all.txt
+cat smb_results.txt | grep -i open | cut -d" " -f2 > smb_server_all.txt
 
 for vul in $(find / -name smb*vuln*.nse | cut -d"/" -f 6); do nmap -v -p 139,445 --script=$vul -iL smb_server_all.txt -oN smb_vulns_$vul.txt; done
 
