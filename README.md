@@ -1,4 +1,4 @@
-# CrushingOSCP##OSCP Notes
+# Crushing OSCP Notes
 
 `Christian Galvan | March 17th, 2022
 
