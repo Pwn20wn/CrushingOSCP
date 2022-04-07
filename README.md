@@ -1,10 +1,6 @@
 # Crushing OSCP Notes
 
-`Christian Galvan | March 17th, 2022
-
-This will be to store my notes and link references used through taking my OSCP
-
-[embed]https://github.com/Pwn20wn/CrushingOSCP/blob/main/images/OSCP-Labs-Pentest-Process.pdf[/embed]
+Christian Galvan | March 17th, 2022
 
 ## Getting started
 
