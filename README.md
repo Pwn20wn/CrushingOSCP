@@ -1,39 +1,56 @@
 # Crushing OSCP Notes
 
-Christian Galvan | March 17th, 2022
 
-## Getting started
-
-To make it easy for you to get started with Gitlab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.Gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.Gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.Gitlab.com/ee/Gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://github.com/Pwn20wn/CrushingOSCP.git
-git branch -M main
-git push -uf origin main
-```
 ## Tools to Download
-- [] LinPeas
-- [] JuicyPotato
-- [] Seclists
-- [] Sherlock
-- [] PowerUp
+- LinPeas
+- JuicyPotato
+- Seclists
+- Sherlock
+- PowerUp
 
 ## Don't reinvent the wheel
-- [] 
+- If there are scripts out there that already work, they're meant to be used as long as they don't have auto-exploitation mechanisms
 ## Reference Links
+
 ### Web Recon
 ```
+nmap -A -p80 --open 10.11.1.0/24 -oG nmap-scan_10.11.1.1-254
+
+cat nmap-scan_10.11.1.1-254
+
+cat nmap-scan_10.11.1.1-254 | grep 80
+
+cat nmap-scan_10.11.1.1-254 | grep 80 | grep -v "Nmap"
+
+cat nmap-scan_10.11.1.1-254 | grep 80 | grep -v "Nmap" | awk '{print $2}'
+
+for ip in $(cat nmap-scan_10.11.1.1-254 | grep 80 | grep -v "Nmap" | awk '{print $2}'); do cutycapt --url=$ip --out=$ip.png;done 
+
+
 ```
 ### Network Recon
 ```
+• Nmap default scripts and service versions
+• Stealth scans
+• Top-1000 ports
+• Check open shares
+	○ Script folders
+	○ Interesting names
+• Check FTP 
+	○ Check for creds in shares, website, source code, or default based on software
+• Check SNMP
+• Enumerate web ports
+	○ Do a http sweep of all web ports and take screenshot across network
+	○ Run gobuster
+	○ Run nikto 
+	○ Dirbuster
+	○ Web applications
+		§ SQL injection
+		§ Default creds
+		§ RFI
+		§ LFI
+		§ Check versions for all web technologies
+
 ```
 ### Look for LHF CVE's
 ```
@@ -51,21 +68,10 @@ for vul in $(find / -name smb*vuln*.nse | cut -d"/" -f 6); do nmap -v -p 139,445
 ```
 ### Web Enumeration
 ```
-nmap -A -p80 --open 10.11.1.0/24 -oG nmap-scan_10.11.1.1-254
-
-cat nmap-scan_10.11.1.1-254
-
-cat nmap-scan_10.11.1.1-254 | grep 80
-
-cat nmap-scan_10.11.1.1-254 | grep 80 | grep -v "Nmap"
-
-cat nmap-scan_10.11.1.1-254 | grep 80 | grep -v "Nmap" | awk '{print $2}'
-
-for ip in $(cat nmap-scan_10.11.1.1-254 | grep 80 | grep -v "Nmap" | awk '{print $2}'); do cutycapt --url=$ip --out=$ip.png;done ![image](https://user-images.githubusercontent.com/32726832/168017683-f53aedfb-8f65-4d11-86f1-e937c76de13a.png)
-
 nmap --script http-enum.nse 10.11.1.133
 nikto -h http://10.11.1.133
 gobuster dir http://10.11.1.133 -w /usr/share/seclists/Discovery/Web_Content/common.txt -s '200,204,301,302,307,403,500' -e
+dirb http://10.11.1.8/
 
 ```
 ### Network Enumeration
