@@ -2,11 +2,15 @@
 
 
 ## Tools to Download
+- WinPEASany
 - LinPeas
 - JuicyPotato
 - Seclists
 - Sherlock
 - PowerUp
+- PSexec
+- Kerbrute
+- Wesng
 
 ## Don't reinvent the wheel
 - If there are scripts out there that already work, they're meant to be used as long as they don't have auto-exploitation mechanisms
